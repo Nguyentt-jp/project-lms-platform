@@ -2,15 +2,20 @@
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Github} from "lucide-react";
+import {Github, Loader, Loader2, Send} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {useTransition} from "react";
+import {useState, useTransition} from "react";
 import {authClient} from "@/lib/auth-client";
 import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
 export default function LoginForm() {
     const [githubPending, startGithubTransition] = useTransition();
+    const [email, setEmail] = useState("");
+    const [emailPending, startEmailTransition] = useTransition();
+    const router = useRouter();
+
     async function handleSignInWithGithub(){
         startGithubTransition(async () => {
             await authClient.signIn.social({
@@ -27,11 +32,30 @@ export default function LoginForm() {
             });
         })
     }
+
+    function handleSignInWithEmail(){
+        startEmailTransition(async () => {
+            await authClient.emailOtp.sendVerificationOtp({
+                email: email,
+                type: "sign-in",
+                fetchOptions: {
+                    onSuccess: () => {
+                        toast.success("Verification email sent!");
+                        router.push(`/verify-request?email=${email}`);
+                    },
+                    onError: (error) => {
+                        toast.error("Internal service error!");
+                    }
+                }
+            })
+        })
+    }
+
     return(
         <Card>
             <CardHeader>
                 <CardTitle className="text-xl">Welcome Back!</CardTitle>
-                <CardDescription>Login with your Github Email Account</CardDescription>
+                <CardDescription>Login with your Github or Email Account</CardDescription>
             </CardHeader>
 
             <CardContent className="grid gap-4">
@@ -52,9 +76,31 @@ export default function LoginForm() {
                 <div className="grid gap-3">
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input type="email" placeholder="m@example.com"/>
+                        <Input
+                            value={email}
+                            onChange={(e) => (setEmail(e.target.value))}
+                            type="email"
+                            placeholder="m@example.com"
+                            required
+                        />
                     </div>
-                    <Button className="w-full">Continue with Email</Button>
+                    <Button
+                        onClick={handleSignInWithEmail}
+                        disabled={emailPending}
+                        className="w-full">
+                        {emailPending ? (
+                            <>
+                                <Loader2 className="size-4 animate-spin"/>
+                                <span>Loading...</span>
+                            </>
+                        ):(
+                            <>
+                                <Send className="size-4"></Send>
+                                <span>Continue with Email</span>
+                            </>
+                        )}
+
+                    </Button>
                 </div>
             </CardContent>
         </Card>
