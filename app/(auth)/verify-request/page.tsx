@@ -13,7 +13,7 @@ export default function VerifyRequest() {
     const [otp, setOtp] = useState("");
     const [emailPending, startEmailTransition] = useTransition();
     const params = useSearchParams();
-    const email = params.get("") as string;
+    const email = params.get("email") as string;
     const isOtpComplete = otp.length === 6;
 
     function handleVerifyRequest(){
@@ -27,7 +27,7 @@ export default function VerifyRequest() {
                         router.push("/");
                     },
                     onError: (error) => {
-                        toast.error("Verification failed!");
+                        toast.error("Verification failed!" + otp);
                     }
                 }
             })
