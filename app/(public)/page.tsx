@@ -4,6 +4,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "../context/auth-provider";
+import { User } from "@/lib/type";
 
 interface featuresProps {
     title: string;
@@ -34,7 +36,8 @@ const features: featuresProps[] = [
     }
 ];
 
-export default function Home() {
+export default function HomePage() {
+    const userInfo: User | "" = useAuth();    
     return (
         <>
             <section className="relative py-20">
@@ -54,15 +57,16 @@ export default function Home() {
                             href="/courses">
                             Explore Courses
                         </Link>
-                        <Link
-                            className={buttonVariants({
-                                size: "lg",
-                                variant: "outline"
-                            })}
-                            href="/login"
-                        >
-                            Sign In
-                        </Link>
+                        {userInfo ? (<></>) : (    
+                            <Link
+                                className={buttonVariants({
+                                    size: "lg",
+                                    variant: "outline"
+                                })}
+                                href="/login"
+                            >
+                                Sign In
+                            </Link>)}
                     </div>
                 </div>
             </section>

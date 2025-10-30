@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "@/public/vercel.svg";
 import {ModeToggle} from "@/components/ui/mode-toggle";
-import {authClient} from "@/lib/auth-client";
 import {buttonVariants} from "@/components/ui/button";
 import UserDropdown from "@/app/(public)/_components/user-dropdown";
+import { useAuth } from "@/app/context/auth-provider";
+import { User } from "@/lib/type";
 
 const navItems = [
     {name: "Home", href: "/"},
@@ -15,7 +16,7 @@ const navItems = [
 ]
 
 export default function Navbar(){
-    const {data: session, isPending} = authClient.useSession()
+    const userInfo: User | null = useAuth();
     return( 
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60">
             <div className="container flex min-h-16 items-center mx-auto px-4 md:px-6 lg:px-8">
@@ -38,11 +39,11 @@ export default function Navbar(){
                     </div>
                     <div className="flex items-center space-x-4">
                         <ModeToggle/>
-                        {isPending ? null : session ? (
+                        {userInfo ?  (
                             <UserDropdown
-                                email={session.user.email}
-                                name={session.user.name}
-                                image={session.user.image || ""}
+                                email={userInfo.email}
+                                name={userInfo.name}
+                                image={userInfo.image || ""}
                             />
                         ):(
                             <>

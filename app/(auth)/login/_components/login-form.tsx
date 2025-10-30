@@ -2,7 +2,7 @@
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Github, Loader, Loader2, Send} from "lucide-react";
+import {Github, Loader2, Send} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {useState, useTransition} from "react";
