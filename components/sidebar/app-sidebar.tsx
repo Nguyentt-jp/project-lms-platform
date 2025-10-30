@@ -7,24 +7,19 @@ import {
 	IconCamera,
 	IconChartBar,
 	IconDashboard,
-	IconDatabase,
 	IconFileAi,
 	IconFileDescription,
-	IconFileWord,
 	IconFolder,
 	IconHelp,
-	IconInnerShadowTop,
 	IconListDetails,
-	IconReport,
 	IconSearch,
 	IconSettings,
 	IconUsers,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/sidebar/nav-main"
+import { NavSecondary } from "@/components/sidebar/nav-secondary"
+import { NavUser } from "@/components/sidebar/nav-user"
 import {
 	Sidebar,
 	SidebarContent,
@@ -50,12 +45,12 @@ const data = {
 	navMain: [
 		{
 			title: "Dashboard",
-			url: "#",
+			url: "/admin",
 			icon: IconDashboard,
 		},
 		{
-			title: "Lifecycle",
-			url: "#",
+			title: "Course",
+			url: "/admin/course",
 			icon: IconListDetails,
 		},
 		{
@@ -138,43 +133,12 @@ const data = {
 			url: "#",
 			icon: IconSearch,
 		},
-	],
-	documents: [
-		{
-			name: "Data Library",
-			url: "#",
-			icon: IconDatabase,
-		},
-		{
-			name: "Reports",
-			url: "#",
-			icon: IconReport,
-		},
-		{
-			name: "Word Assistant",
-			url: "#",
-			icon: IconFileWord,
-		},
-	],
+	]
 }
 
 export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
-	const router = useRouter();
-	const userInfo: User | "" = useAuth();	
-
-	async function handleLogout() {
-        await authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                    router.push("/login");
-                    toast.success("Logged out successfully!");
-                },
-                onError: (error) => {
-                    toast.error("Logged out failed!");
-                }
-            },
-        });
-    };
+	const userInfo: User | null = useAuth();	
+	
 	return (
 		<Sidebar collapsible="offcanvas" {...props}>
 			<SidebarHeader>
@@ -191,13 +155,11 @@ export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavDocuments items={data.documents} />
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser 
 					user={userInfo}
-					onLogout={handleLogout}
 				/>
 			</SidebarFooter>
 		</Sidebar>

@@ -1,22 +1,31 @@
 "use client"
 
 import { User } from "@/lib/type";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 
-const AuthContext = createContext<User | "">("")
+type AuthContextType = User | null
 
-export default function AuthProvider({ children, value }: { children: React.ReactNode; value: User }) {
-	return (
-		<AuthContext.Provider value={value}>
-			{children}
-		</AuthContext.Provider>
-	);
+const AuthContext = createContext<AuthContextType>(null)
+
+export default function AuthProvider({
+	children,
+	value,
+}: {
+	children: React.ReactNode
+	/** current authenticated user, or null when unauthenticated */
+	value?: User | null
+}) {
+	// memoize to avoid re-rendering consumers when parent re-renders
+	const memo = useMemo(() => value ?? null, [value])
+
+	return <AuthContext.Provider value={memo}>{children}</AuthContext.Provider>
 }
 
-export function useAuth() {
-	const ctx = useContext(AuthContext);
-	if (!ctx) {
-		return "";
-	}
-	return ctx;
+/**
+ * Hook to access the current authenticated user (or null).
+ * Returns: User | null
+ */
+export function useAuth(): AuthContextType {
+	const ctx = useContext(AuthContext)
+	return ctx
 }

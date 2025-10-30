@@ -1,11 +1,9 @@
 "use client"
 
 import {
-	IconCreditCard,
+	IconDashboard,
 	IconDotsVertical,
 	IconLogout,
-	IconNotification,
-	IconUserCircle,
 } from "@tabler/icons-react"
 
 import {
@@ -30,16 +28,15 @@ import {
 } from "@/components/ui/sidebar"
 import { User } from "@/lib/type"
 import React from "react"
+import Link from "next/link"
+import { HomeIcon, Tv2 } from "lucide-react"
+import { useSignOut } from "@/hooks/use-signout"
 
-interface NavUserProps {
-	user: User | ""
-	onLogout: () => void
-}
+export function NavUser({ user }: {user: User | null}) {
+	const { isMobile } = useSidebar();
+	const handleSignOut = useSignOut();
 
-export function NavUser({ user, onLogout }: NavUserProps) {
-	const { isMobile } = useSidebar()
-
-	if (user) {
+	if (user){
 		return (
 			<SidebarMenu>
 				<SidebarMenuItem>
@@ -49,9 +46,9 @@ export function NavUser({ user, onLogout }: NavUserProps) {
 								size="lg"
 								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
-								<Avatar className="h-8 w-8 rounded-lg grayscale">
+								<Avatar className="h-8 w-8 rounded-lg">
 									<AvatarImage src={user.image} alt={user.name} />
-									<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+									<AvatarFallback className="rounded-lg">{user.name}</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-medium">{user.name}</span>
@@ -59,11 +56,11 @@ export function NavUser({ user, onLogout }: NavUserProps) {
 										{user.email}
 									</span>
 								</div>
-								<IconDotsVertical className="ml-auto size-4" />
+								<IconDotsVertical className="ml-auto" size={16} aria-hidden />
 							</SidebarMenuButton>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent
-							className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+							className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[14rem] rounded-lg"
 							side={isMobile ? "bottom" : "right"}
 							align="end"
 							sideOffset={4}
@@ -72,10 +69,12 @@ export function NavUser({ user, onLogout }: NavUserProps) {
 								<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 									<Avatar className="h-8 w-8 rounded-lg">
 										<AvatarImage src={user.image} alt={user.name} />
-										<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+										<AvatarFallback className="rounded-lg">{user.name}</AvatarFallback>
 									</Avatar>
 									<div className="grid flex-1 text-left text-sm leading-tight">
-										<span className="truncate font-medium">{user.name}</span>
+										<span className="truncate font-medium">
+											{user.name ? user.name : user.email.split("@")[0]}
+										</span>
 										<span className="text-muted-foreground truncate text-xs">
 											{user.email}
 										</span>
@@ -84,23 +83,29 @@ export function NavUser({ user, onLogout }: NavUserProps) {
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<DropdownMenuGroup>
-								<DropdownMenuItem>
-									<IconUserCircle />
-									Account
+								<DropdownMenuItem className="flex items-center gap-2" asChild>
+									<Link href="/">
+										<HomeIcon size={16} aria-hidden />
+										<span>Home</span>
+									</Link>
 								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<IconCreditCard />
-									Billing
+								<DropdownMenuItem className="flex items-center gap-2" asChild>
+									<Link href="/admin">
+										<IconDashboard size={16} aria-hidden />
+										<span>Dashboard</span>
+									</Link>
 								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<IconNotification />
-									Notifications
+								<DropdownMenuItem className="flex items-center gap-2" asChild>
+									<Link href="/admin/course">
+										<Tv2 size={16} aria-hidden />
+										<span>Course</span>
+									</Link>
 								</DropdownMenuItem>
 							</DropdownMenuGroup>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={onLogout}>
-								<IconLogout />
-								<span>LogOut</span>
+							<DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2">
+								<IconLogout size={16} aria-hidden />
+								<span>Log out</span>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
