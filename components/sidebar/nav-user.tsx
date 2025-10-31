@@ -29,7 +29,7 @@ import {
 import { User } from "@/lib/type"
 import React from "react"
 import Link from "next/link"
-import { HomeIcon, Tv2 } from "lucide-react"
+import { BookOpenIcon, HomeIcon, Tv2 } from "lucide-react"
 import { useSignOut } from "@/hooks/use-signout"
 
 export function NavUser({ user }: {user: User | null}) {
@@ -97,7 +97,7 @@ export function NavUser({ user }: {user: User | null}) {
 								</DropdownMenuItem>
 								<DropdownMenuItem className="flex items-center gap-2" asChild>
 									<Link href="/admin/course">
-										<Tv2 size={16} aria-hidden />
+										<BookOpenIcon size={16} aria-hidden />
 										<span>Course</span>
 									</Link>
 								</DropdownMenuItem>

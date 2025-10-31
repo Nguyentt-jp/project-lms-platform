@@ -12,7 +12,7 @@ import { User } from "@/lib/type";
 const navItems = [
     {name: "Home", href: "/"},
     {name: "Courses", href: "/courses"},
-    {name: "Dashboard", href: "/dashboard"},
+    {name: "Dashboard", href: "/admin"},
 ]
 
 export default function Navbar(){

@@ -13,41 +13,38 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         headers: await headers(),
     });
 
-    var userInfo: User
+    if(!session){
+        redirect("/login")
+    }
 
-    if (session) {
-        userInfo = {
-            name: session.user.name,
-            email: session.user.email,
-            image: session.user.image || ""
-        }
-        return (
-            <AuthProvider value={userInfo}>
-                <SidebarProvider
-                    style={
-                        {
-                            "--sidebar-width": "calc(var(--spacing) * 72)",
-                            "--header-height": "calc(var(--spacing) * 12)",
-                        } as React.CSSProperties
-                    }
-                >
-                    <AppSidebar variant="inset" />
-                    <SidebarInset>
-                        <SiteHeader />
-                        <div className="flex flex-1 flex-col">
-                            <div className="@container/main flex flex-1 flex-col gap-2">
-                                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 lg:px-4">
-                                    {children}
-                                </div>
+    const userInfo: User | null = session ? {
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image || ""
+    } : null;
+    
+    return (
+        <AuthProvider session={userInfo}>
+            <SidebarProvider
+                style={
+                    {
+                        "--sidebar-width": "calc(var(--spacing) * 72)",
+                        "--header-height": "calc(var(--spacing) * 12)",
+                    } as React.CSSProperties
+                }
+            >
+                <AppSidebar variant="inset" />
+                <SidebarInset>
+                    <SiteHeader />
+                    <div className="flex flex-1 flex-col">
+                        <div className="@container/main flex flex-1 flex-col gap-2">
+                            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 lg:px-4">
+                                {children}
                             </div>
                         </div>
-                    </SidebarInset>
-                </SidebarProvider>
-            </AuthProvider>
-        );
-    } else {
-        return (
-            redirect("/login")
-        );
-    }
+                    </div>
+                </SidebarInset>
+            </SidebarProvider>
+        </AuthProvider>
+    );    
 }

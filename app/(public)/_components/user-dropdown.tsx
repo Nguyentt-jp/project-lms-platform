@@ -2,6 +2,7 @@ import {
     BoltIcon,
     BookOpenIcon,
     ChevronDownIcon,
+    HomeIcon,
     Layers2Icon,
     LogOutIcon,
 } from "lucide-react"
@@ -22,9 +23,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link";
-import {useRouter} from "next/navigation";
-import {authClient} from "@/lib/auth-client";
-import {toast} from "sonner";
+import { useSignOut } from "@/hooks/use-signout";
+import { IconDashboard } from "@tabler/icons-react";
 
 interface IUserProps {
     name: string,
@@ -33,20 +33,7 @@ interface IUserProps {
 }
 
 export default function UserDropdown({name, email, image}: IUserProps) {
-    const router = useRouter();
-    async function handleLogout() {
-        await authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                    router.push("/login");
-                    toast.success("Logged out successfully!");
-                },
-                onError: (error) => {
-                    toast.error("Logged out failed!");
-                }
-            },
-        });
-    };
+    const handleSignOut = useSignOut();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -75,25 +62,25 @@ export default function UserDropdown({name, email, image}: IUserProps) {
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                         <Link href="/">
-                            <BoltIcon size={16} className="opacity-60" aria-hidden="true"/>
+                            <HomeIcon size={16} className="opacity-60" aria-hidden="true"/>
                             <span>Home</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                         <Link href="/course">
-                            <Layers2Icon size={16} className="opacity-60" aria-hidden="true"/>
+                            <BookOpenIcon size={16} className="opacity-60" aria-hidden="true"/>
                             <span>Course</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                         <Link href="/admin">
-                            <BookOpenIcon size={16} className="opacity-60" aria-hidden="true"/>
+                            <IconDashboard size={16} className="opacity-60" aria-hidden="true"/>
                             <span>Dashboard</span>
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={handleSignOut}>
                     <LogOutIcon size={16} className="opacity-60" aria-hidden="true"/>
                     <span>Logout</span>
                 </DropdownMenuItem>

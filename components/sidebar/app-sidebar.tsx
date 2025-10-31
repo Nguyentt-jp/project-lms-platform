@@ -29,9 +29,6 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { authClient } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import Link from "next/link"
 import { User } from "@/lib/type";
 import { useAuth } from "@/app/context/auth-provider";
