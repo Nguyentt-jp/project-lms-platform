@@ -37,7 +37,7 @@ const features: featuresProps[] = [
 ];
 
 export default function HomePage() {
-    const userInfo: User | null = useAuth();    
+    const userInfo: User | null = useAuth();   
     return (
         <>
             <section className="relative py-20">

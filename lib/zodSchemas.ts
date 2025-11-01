@@ -1,15 +1,28 @@
 import * as z from "zod";
 
-const courseLevel = [
+export const courseLevel = [
     "Beginner",
     "Intermediate",
     "Advanced",
 ];
 
-const courseStatus = [
+export const courseStatus = [
     "Draft",
     "Published",
     "Archived",
+];
+
+export const courseCategoris = [
+    "Deployment",
+    "Business",
+    "Finance",
+    "IT & Software",
+    "Office Productivity",
+    "Design",
+    "Marketing",
+    "Health & Fitness",
+    "Music",
+    "Teaching & Academics"
 ];
 export const courseSchema = z.object({
     title: z.string().min(
@@ -42,7 +55,10 @@ export const courseSchema = z.object({
         courseLevel,
         "Level is requied!"
     ),
-    category: z.string(),
+    category: z.enum(
+        courseCategoris,
+        "Category is requied!"
+    ),
     smallDescription: z.string().min(
         1,
         "Small description must be at least 1 characters!"
