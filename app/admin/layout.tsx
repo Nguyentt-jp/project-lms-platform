@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { User } from "@/lib/type";
 import { headers } from "next/headers";
-import AuthProvider from "../context/auth-provider";
+import AuthProvider from "@/context/auth-provider";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";

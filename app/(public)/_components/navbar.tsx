@@ -6,7 +6,7 @@ import logo from "@/public/vercel.svg";
 import {ModeToggle} from "@/components/ui/mode-toggle";
 import {buttonVariants} from "@/components/ui/button";
 import UserDropdown from "@/app/(public)/_components/user-dropdown";
-import { useAuth } from "@/app/context/auth-provider";
+import { useAuth } from "@/context/auth-provider";
 import { User } from "@/lib/type";
 
 const navItems = [

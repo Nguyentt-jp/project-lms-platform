@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import { User } from "@/lib/type";
-import { useAuth } from "@/app/context/auth-provider";
+import { useAuth } from "@/context/auth-provider";
 
 const data = {
 	user: {

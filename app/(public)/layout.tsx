@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import Navbar from "./_components/navbar";
 import { headers } from "next/headers";
 import { User } from "@/lib/type";
-import AuthProvider from "../context/auth-provider";
+import AuthProvider from "@/context/auth-provider";
 
 export default async function PublicLayout({children}:{children: React.ReactNode}){
     const session = await auth.api.getSession({
