@@ -1,9 +1,7 @@
 import {
-    BoltIcon,
     BookOpenIcon,
     ChevronDownIcon,
     HomeIcon,
-    Layers2Icon,
     LogOutIcon,
 } from "lucide-react"
 
@@ -12,7 +10,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
-import {Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -32,7 +30,7 @@ interface IUserProps {
     image: string,
 }
 
-export default function UserDropdown({name, email, image}: IUserProps) {
+export default function UserDropdown( { name, email, image }: IUserProps ) {
     const handleSignOut = useSignOut();
     return (
         <DropdownMenu>

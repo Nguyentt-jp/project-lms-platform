@@ -3,18 +3,33 @@ import { Toggle } from "@/components/ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Editor } from "@tiptap/react";
-import { AlignCenter, AlignLeft, AlignRight, Bold, Heading1Icon, Heading2Icon, Heading3Icon, Italic, ListIcon, ListOrderedIcon, Redo, Strikethrough, Undo } from "lucide-react";
+import {
+    AlignCenter,
+    AlignLeft,
+    AlignRight,
+    Bold,
+    Heading1Icon,
+    Heading2Icon,
+    Heading3Icon,
+    Italic,
+    ListIcon,
+    ListOrderedIcon,
+    Redo,
+    Strikethrough,
+    Undo
+} from "lucide-react";
 
 type AppProps = {
     editor: Editor | null;
 }
 
-export default function MenuBar({ editor }: AppProps) {
-    if (!editor) {
+export default function MenuBar( { editor }: AppProps ) {
+    if ( !editor ) {
         return null;
     }
     return (
-        <div className="border border-input border-t-0 border-x-0 rounded-t-lg p-2 bg-card flex flex-wrap gap-1 items-center">
+        <div
+            className="border border-input border-t-0 border-x-0 rounded-t-lg p-2 bg-card flex flex-wrap gap-1 items-center">
             <TooltipProvider>
                 <div className="flex flex-wrap gap-1">
                     <Tooltip>
@@ -22,12 +37,12 @@ export default function MenuBar({ editor }: AppProps) {
                             <Toggle
                                 size="sm"
                                 pressed={editor.isActive("bold")}
-                                onPressedChange={() => editor.chain().focus().toggleBold().run()}
+                                onPressedChange={() => editor.chain().focus().run()}
                                 className={cn(
                                     editor.isActive("bold") && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Bold />
+                                <Bold/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Bold</TooltipContent>
@@ -42,7 +57,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("italic") && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Italic />
+                                <Italic/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Italic</TooltipContent>
@@ -57,7 +72,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("strike") && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Strikethrough />
+                                <Strikethrough/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Strike</TooltipContent>
@@ -72,7 +87,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("heading", { levels: 1 }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Heading1Icon />
+                                <Heading1Icon/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Heading level 1</TooltipContent>
@@ -87,7 +102,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("heading", { levels: 2 }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Heading2Icon />
+                                <Heading2Icon/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Heading level 2</TooltipContent>
@@ -102,7 +117,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("heading", { levels: 3 }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <Heading3Icon />
+                                <Heading3Icon/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Heading level 3</TooltipContent>
@@ -117,7 +132,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("bulletList") && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <ListIcon />
+                                <ListIcon/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Bullet List</TooltipContent>
@@ -132,7 +147,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive("orderList", { levels: 1 }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <ListOrderedIcon />
+                                <ListOrderedIcon/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Order List</TooltipContent>
@@ -150,7 +165,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive({ TextAlign: "left" }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <AlignLeft />
+                                <AlignLeft/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Align Left</TooltipContent>
@@ -165,7 +180,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive({ TextAlign: "center" }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <AlignCenter />
+                                <AlignCenter/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Align Center</TooltipContent>
@@ -180,7 +195,7 @@ export default function MenuBar({ editor }: AppProps) {
                                     editor.isActive({ TextAlign: "right" }) && "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <AlignRight />
+                                <AlignRight/>
                             </Toggle>
                         </TooltipTrigger>
                         <TooltipContent>Align Right</TooltipContent>
@@ -190,8 +205,8 @@ export default function MenuBar({ editor }: AppProps) {
                 <div className="flex flex-wrap gap-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button 
-                                type="button" 
+                            <Button
+                                type="button"
                                 size="sm"
                                 variant="ghost"
                                 disabled={!editor.can().undo()}
@@ -201,10 +216,11 @@ export default function MenuBar({ editor }: AppProps) {
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>Undo</TooltipContent>
-                    </Tooltip><Tooltip>
+                    </Tooltip>
+                    <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button 
-                                type="button" 
+                            <Button
+                                type="button"
                                 size="sm"
                                 variant="ghost"
                                 disabled={!editor.can().redo()}

@@ -3,22 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import logo from "@/public/vercel.svg";
-import {ModeToggle} from "@/components/ui/mode-toggle";
-import {buttonVariants} from "@/components/ui/button";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { buttonVariants } from "@/components/ui/button";
 import UserDropdown from "@/app/(public)/_components/user-dropdown";
 import { useAuth } from "@/context/auth-provider";
 import { User } from "@/lib/type";
 
 const navItems = [
-    {name: "Home", href: "/"},
-    {name: "Courses", href: "/courses"},
-    {name: "Dashboard", href: "/admin"},
+    { name: "Home", href: "/" },
+    { name: "Courses", href: "/courses" },
+    { name: "Dashboard", href: "/admin" },
 ]
 
-export default function Navbar(){
+export default function Navbar() {
     const userInfo: User | null = useAuth();
-    return( 
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60">
+    return (
+        <header
+            className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-[backdrop-filter]:bg-background/60">
             <div className="container flex min-h-16 items-center mx-auto px-4 md:px-6 lg:px-8">
                 <Link href="/" className="flex items-center space-x-2 mr-4">
                     <Image src={logo} alt="Logo" className="size-9"/>
@@ -27,7 +28,7 @@ export default function Navbar(){
                 {/*Desktop Navigation */}
                 <nav className="hidden md:flex md:flex-1 md:items-center md:justify-between">
                     <div className="flex items-center space-x-4">
-                        {navItems.map((item, index) => (
+                        {navItems.map(( item, index ) => (
                             <Link
                                 className="text-sm font-medium transition-colors hover:text-primary"
                                 href={item.href}
@@ -39,17 +40,17 @@ export default function Navbar(){
                     </div>
                     <div className="flex items-center space-x-4">
                         <ModeToggle/>
-                        {userInfo ?  (
+                        {userInfo ? (
                             <UserDropdown
                                 email={userInfo.email}
                                 name={userInfo.name}
                                 image={userInfo.image || ""}
                             />
-                        ):(
+                        ) : (
                             <>
                                 <Link
                                     href="/login"
-                                    className={buttonVariants({variant: "secondary"})}
+                                    className={buttonVariants({ variant: "secondary" })}
                                 >
                                     Login
                                 </Link>
@@ -60,7 +61,7 @@ export default function Navbar(){
                                     Get Started
                                 </Link>
                             </>
-                        ) }
+                        )}
                     </div>
                 </nav>
             </div>
