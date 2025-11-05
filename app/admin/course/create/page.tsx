@@ -27,7 +27,7 @@ export default function CourseCreationPage() {
             price: 0,
             duration: 0,
             level: "Beginner",
-            category: "Music",
+            category: "Deployment",
             smallDescription: "",
             slug: "",
             status: "Draft",

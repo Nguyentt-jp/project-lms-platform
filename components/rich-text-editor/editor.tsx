@@ -1,6 +1,6 @@
 "use client"
 
-import MenuBar from "@/components/rich-text-editor/menubar";
+import MenuBar from "@/components/rich-text-editor/_component/menubar";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import TextAlign from '@tiptap/extension-text-align'
@@ -22,7 +22,7 @@ export default function RichTextEditor({field}: any) {
         onUpdate: ({editor}) => {
             field.onChange(JSON.stringify(editor.getJSON()))
         },
-        content: field.value ? JSON.parse(field.value) : "<p>hello</p>"
+        content: field.value ? JSON.parse(field.value) : "<p>Please enter some text</p>"
     });
     return (
         <div className="w-full border border-input rounded-lg overflow-hidden dark:bg-input/30">
