@@ -1,3 +1,5 @@
+import "server-only";
+
 import arcjet, {
     detectBot,
     fixedWindow,
@@ -19,7 +21,7 @@ export {
 
 export default arcjet({
     key: env.ARCJET_KEY,
-    characteristics: ["fingerprint"],
+    characteristics: [ "fingerprint" ],
     rules: [
         shield({
             mode: "LIVE",

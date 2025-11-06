@@ -1,5 +1,5 @@
-import {createEnv} from "@t3-oss/env-nextjs";
-import {z} from "zod";
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
     server: {
@@ -10,9 +10,16 @@ export const env = createEnv({
         GITHUB_CLIENT_SECRET: z.string().min(1),
         RESEND_API_KEY: z.string().min(1),
         ARCJET_KEY: z.string().min(1),
+        S3_STORAGE_URL: z.url(),
+        S3_STORAGE_REGION: z.string().min(1),
+        S3_STORAGE_ACCESS_KEY: z.string().min(1),
+        S3_STORAGE_SECRET_KEY: z.string().min(1),
+    },
+    client: {
+        NEXT_PUBLIC_S3_STORAGE_BUCKET: z.string().min(1)
     },
     // For Next.js >= 13.4.4, you only need to destructure client variables:
     experimental__runtimeEnv: {
-        NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+        NEXT_PUBLIC_S3_STORAGE_BUCKET: process.env.NEXT_PUBLIC_S3_STORAGE_BUCKET,
     }
 });

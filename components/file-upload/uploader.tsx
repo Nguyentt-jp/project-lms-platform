@@ -22,12 +22,80 @@ export default function Uploader() {
         fileType: "image",
     });
 
-    function uploadFile( file: File ) {
+    async function uploadFile( file: File ) {
         setFileState(( prevState ) => ({
             ...prevState,
             uploading: true,
             progress: 0,
         }));
+
+        try {
+            // Get presigner URL
+            const presignedResponse = await fetch("/api/s3-storage/upload", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    fileName: file.name,
+                    contentType: file.type,
+                    size: file.size,
+                    isImage: true,
+                }),
+            });
+
+            if ( !presignedResponse.ok ) {
+                toast.error("Failed to get presigned URL");
+                setFileState(( prevState ) => ({
+                    ...prevState,
+                    uploading: false,
+                    progress: 0,
+                    error: true
+                }));
+
+                return;
+            }
+
+            const { preSignerURL, key } = await presignedResponse.json();
+
+            await new Promise<void>(( resolve, reject ) => {
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.onprogress = ( event ) => {
+                    if ( event.lengthComputable ) {
+                        const percentageCompleted = (event.loaded / event.total) * 100;
+                        setFileState(( prevState ) => ({
+                            ...prevState,
+                            progress: Math.round(percentageCompleted)
+                        }));
+                    }
+                }
+
+                xhr.onload = ( event ) => {
+                    if ( xhr.status === 200 || xhr.status === 204 ) {
+                        setFileState(( prevState ) => ({
+                            ...prevState,
+                            progress: 100,
+                            uploading: false,
+                            key: key
+                        }));
+                        resolve();
+                    } else {
+                        reject(new Error("Upload failed...."));
+                    }
+                }
+
+                xhr.onerror = () => {
+                    reject(new Error("Upload failed...."));
+                }
+
+                xhr.open("PUT", preSignerURL);
+                xhr.setRequestHeader("Content-Type", file.type);
+                xhr.send(file);
+            })
+        } catch {
+            toast.error("Something went wrong!");
+        }
     }
 
     const onDrop = useCallback(( acceptedFile: File[] ) => {
