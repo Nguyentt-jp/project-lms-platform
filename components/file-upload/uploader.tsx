@@ -44,6 +44,8 @@ export default function Uploader() {
                 }),
             });
 
+            console.log(presignedResponse)
+
             if ( !presignedResponse.ok ) {
                 toast.error("Failed to get presigned URL");
                 setFileState(( prevState ) => ({
@@ -95,6 +97,13 @@ export default function Uploader() {
             })
         } catch {
             toast.error("Something went wrong!");
+
+            setFileState(( prevState ) => ({
+                ...prevState,
+                progress: 0,
+                uploading: false,
+                error: true,
+            }));
         }
     }
 
@@ -112,6 +121,8 @@ export default function Uploader() {
                 objectUrl: URL.createObjectURL(acceptedFile[0])
             })
         }
+
+        uploadFile(acceptedFile[0])
     }, []);
 
     function rejectFile( fileRejections: FileRejection[] ) {
@@ -134,6 +145,28 @@ export default function Uploader() {
         }
     }
 
+    function renderContent() {
+        if ( fileState.uploading ) {
+            return (
+                <h1>Uploading...</h1>
+            );
+        }
+
+        if ( fileState.error ) {
+            return(
+                <RenderErrorState />
+            );
+        }
+
+        if ( fileState.objectUrl ){
+            return(
+                <h1>Uploaded file</h1>
+            );
+        }
+
+        return(<RenderEmptyState isDragActive={isDragActive}/>);
+    }
+
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: { "image/*": [] },
@@ -151,10 +184,7 @@ export default function Uploader() {
         )}>
             <CardContent className="flex items-center justify-center h-full w-full p-4">
                 <input {...getInputProps()} />
-                {
-                    <RenderEmptyState isDragActive={isDragActive}/>
-                    //<RenderErrorState/>
-                }
+                {renderContent()}
             </CardContent>
         </Card>
     )
