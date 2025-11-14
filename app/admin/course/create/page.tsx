@@ -11,13 +11,22 @@ import { CourseSchemaType } from "@/lib/type";
 import { courseCategoris, courseLevel, courseSchema, courseStatus } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus } from "@tabler/icons-react";
-import { ArrowLeft, SparkleIcon } from "lucide-react";
+import { ArrowLeft, Loader2, SparkleIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import Uploader from "@/components/file-upload/uploader";
+import { useTransition } from "react";
+import { tryCatch } from "@/hooks/try-catch";
+import { CreateCourse } from "@/app/admin/course/create/actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function CourseCreationPage() {
+    const [ isPending, startTransition ] = useTransition();
+
+    const router = useRouter()
+
     const form = useForm<CourseSchemaType>({
         resolver: zodResolver(courseSchema),
         defaultValues: {
@@ -34,9 +43,23 @@ export default function CourseCreationPage() {
         }
     });
 
-    function onSubmit( data: CourseSchemaType ) {
-        // Do something with the form values.
-        console.log(data)
+    function onSubmit(values: CourseSchemaType) {
+        startTransition(async () => {
+            const { data: result, error } = await tryCatch(CreateCourse(values));
+
+            if ( error ) {
+                toast.error("An unexpected error occurred. Please try again.");
+                return;
+            }
+
+            if ( result.status === "Success" ) {
+                toast.success(result.message);
+                form.reset();
+                router.push("/admin/course")
+            } else {
+                toast.error(result.message)
+            }
+        });
     }
 
     return (
@@ -64,7 +87,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="title"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
@@ -79,7 +102,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="slug"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Slug</FormLabel>
                                             <FormControl>
@@ -106,7 +129,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="smallDescription"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Small Description</FormLabel>
                                             <FormControl>
@@ -121,7 +144,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="description"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Description</FormLabel>
                                             <FormControl>
@@ -140,12 +163,11 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="fileKey"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Thumnail Image</FormLabel>
                                             <FormControl>
-                                                {/*<Input placeholder="Thumnail url" {...field} />*/}
-                                                <Uploader/>
+                                                <Uploader onChange={field.onChange} value={field.value}/>
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -156,7 +178,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="category"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Category</FormLabel>
                                             <FormControl>
@@ -170,7 +192,7 @@ export default function CourseCreationPage() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {courseCategoris.map(( item ) => (
+                                                        {courseCategoris.map((item) => (
                                                             <SelectItem key={item} value={item}>
                                                                 {item}
                                                             </SelectItem>
@@ -186,7 +208,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="level"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Level</FormLabel>
                                             <FormControl>
@@ -200,7 +222,7 @@ export default function CourseCreationPage() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {courseLevel.map(( item ) => (
+                                                        {courseLevel.map((item) => (
                                                             <SelectItem key={item} value={item}>
                                                                 {item}
                                                             </SelectItem>
@@ -215,7 +237,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="price"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Price ($)</FormLabel>
                                             <FormControl>
@@ -232,7 +254,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="duration"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Duration (hour)</FormLabel>
                                             <FormControl>
@@ -251,7 +273,7 @@ export default function CourseCreationPage() {
                                 <FormField
                                     control={form.control}
                                     name="status"
-                                    render={( { field } ) => (
+                                    render={({ field }) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Status</FormLabel>
                                             <FormControl>
@@ -265,7 +287,7 @@ export default function CourseCreationPage() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {courseStatus.map(( item ) => (
+                                                        {courseStatus.map((item) => (
                                                             <SelectItem key={item} value={item}>
                                                                 {item}
                                                             </SelectItem>
@@ -279,9 +301,18 @@ export default function CourseCreationPage() {
                                 />
                             </div>
                             <div>
-                                <Button>
-                                    Create Course
-                                    <IconPlus className="ml-1" size={16}/>
+                                <Button type="submit" disabled={isPending}>
+                                    {isPending ? (
+                                        <>
+                                            Creating...
+                                            <Loader2 className="animate-spin ml-1"/>
+                                        </>
+                                    ) : (
+                                        <>
+                                            Create Course
+                                            <IconPlus className="ml-1" size={16}/>
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </form>

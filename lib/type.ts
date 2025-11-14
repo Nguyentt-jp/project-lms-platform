@@ -2,6 +2,7 @@ import { z } from "zod";
 import { courseSchema } from "./zodSchemas";
 
 export type User = {
+    id: string,
     name: string,
     email: string,
     image: string,
@@ -34,4 +35,14 @@ export type UploadState = {
     error: boolean;
     objectUrl?: string;
     fileType: "image" | "video";
+}
+
+export interface IAppProps {
+    value?: string;
+    onChange?: (value: string) => void
+}
+
+export type ApiResponse = {
+    status: "Success" | "Error";
+    message: string;
 }

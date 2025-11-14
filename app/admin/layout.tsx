@@ -18,6 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     }
 
     const userInfo: User | null = session ? {
+        id: session.user.id,
         name: session.user.name,
         email: session.user.email,
         image: session.user.image || ""

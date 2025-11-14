@@ -40,11 +40,11 @@ export const courseSchema = z.object({
         1,
         "Filekey is Requied!"
     ),
-    price: z.number().min(
+    price: z.coerce.number().min(
         1,
         "Price must be a positive number!"
     ),
-    duration: z.number().min(
+    duration: z.coerce.number().min(
         1,
         "duration must be at least 1 hour!"
     ).max(

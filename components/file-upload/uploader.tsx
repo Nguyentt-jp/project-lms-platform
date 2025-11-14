@@ -1,16 +1,18 @@
 "use client";
 
 import { FileRejection, useDropzone } from "react-dropzone";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import RenderEmptyState from "@/components/file-upload/render-empty-state";
-import RenderErrorState from "@/components/file-upload/render-error-state";
+import RenderEmptyState from "@/components/file-upload/_components/render-empty-state";
+import RenderErrorState from "@/components/file-upload/_components/render-error-state";
 import { toast } from "sonner";
-import { UploadState } from "@/lib/type";
+import { IAppProps, UploadState } from "@/lib/type";
 import { v4 as uuidv4 } from "uuid";
+import RenderUploadState from "@/components/file-upload/_components/render-upload-state";
+import RenderUploadingState from "@/components/file-upload/_components/render-uploading-state";
 
-export default function Uploader() {
+export default function Uploader({onChange, value}: IAppProps) {
 
     const [ fileState, setFileState ] = useState<UploadState>({
         id: null,
@@ -20,10 +22,11 @@ export default function Uploader() {
         isDeleting: false,
         error: false,
         fileType: "image",
+        key: value
     });
 
-    async function uploadFile( file: File ) {
-        setFileState(( prevState ) => ({
+    async function uploadFile(file: File) {
+        setFileState((prevState) => ({
             ...prevState,
             uploading: true,
             progress: 0,
@@ -44,11 +47,9 @@ export default function Uploader() {
                 }),
             });
 
-            console.log(presignedResponse)
-
             if ( !presignedResponse.ok ) {
                 toast.error("Failed to get presigned URL");
-                setFileState(( prevState ) => ({
+                setFileState((prevState) => ({
                     ...prevState,
                     uploading: false,
                     progress: 0,
@@ -60,27 +61,32 @@ export default function Uploader() {
 
             const { preSignerURL, key } = await presignedResponse.json();
 
-            await new Promise<void>(( resolve, reject ) => {
+            await new Promise<void>((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
 
-                xhr.upload.onprogress = ( event ) => {
+                xhr.upload.onprogress = (event) => {
                     if ( event.lengthComputable ) {
                         const percentageCompleted = (event.loaded / event.total) * 100;
-                        setFileState(( prevState ) => ({
+                        setFileState((prevState) => ({
                             ...prevState,
                             progress: Math.round(percentageCompleted)
                         }));
                     }
                 }
 
-                xhr.onload = ( event ) => {
+                xhr.onload = (event) => {
                     if ( xhr.status === 200 || xhr.status === 204 ) {
-                        setFileState(( prevState ) => ({
+                        setFileState((prevState) => ({
                             ...prevState,
                             progress: 100,
                             uploading: false,
                             key: key
                         }));
+
+                        onChange?.(key);
+
+                        toast.success("File upload successfully")
+
                         resolve();
                     } else {
                         reject(new Error("Upload failed...."));
@@ -98,7 +104,7 @@ export default function Uploader() {
         } catch {
             toast.error("Something went wrong!");
 
-            setFileState(( prevState ) => ({
+            setFileState((prevState) => ({
                 ...prevState,
                 progress: 0,
                 uploading: false,
@@ -107,9 +113,14 @@ export default function Uploader() {
         }
     }
 
-    const onDrop = useCallback(( acceptedFile: File[] ) => {
+    const onDrop = useCallback((acceptedFile: File[]) => {
 
-        if ( acceptedFile.length ) {
+        if ( acceptedFile.length > 0 ) {
+
+            if ( fileState.objectUrl && !fileState.objectUrl.startsWith("http") ) {
+                URL.revokeObjectURL(fileState.objectUrl)
+            }
+
             setFileState({
                 id: uuidv4(),
                 file: acceptedFile[0],
@@ -123,15 +134,76 @@ export default function Uploader() {
         }
 
         uploadFile(acceptedFile[0])
-    }, []);
+    }, [ fileState.objectUrl ]);
 
-    function rejectFile( fileRejections: FileRejection[] ) {
+    async function handleRemoveFile() {
+        if ( fileState.isDeleting || !fileState.objectUrl ) return;
+
+        try {
+            setFileState((prevState) => ({
+                ...prevState,
+                isDeleting: true
+            }));
+
+            const response = await fetch("/api/s3-storage/delete", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Key: fileState.key,
+                }),
+            });
+
+            if ( !response.ok ) {
+                toast.error("Failed to remove file storage")
+
+                setFileState((prevState) => ({
+                    ...prevState,
+                    isDeleting: true,
+                    error: true,
+                }));
+
+                return;
+            }
+
+            if ( fileState.objectUrl && !fileState.objectUrl.startsWith("http") ) {
+                URL.revokeObjectURL(fileState.objectUrl)
+            }
+
+            onChange?.("");
+
+            setFileState(() => ({
+                file: null,
+                uploading: false,
+                progress: 0,
+                objectUrl: undefined,
+                error: false,
+                fileType: "image",
+                id: null,
+                isDeleting: false,
+                key: value,
+            }));
+
+            toast.error("File removed successfully");
+        } catch {
+            toast.error("Error removing file, please try again");
+
+            setFileState((prevState) => ({
+                ...prevState,
+                isDeleting: false,
+                error: true
+            }));
+        }
+    }
+
+    function rejectFile(fileRejections: FileRejection[]) {
         if ( fileRejections.length ) {
-            const toManyFiles = fileRejections.find(( rejection ) => {
+            const toManyFiles = fileRejections.find((rejection) => {
                 rejection.errors[0].code === "too-many-files"
             })
 
-            const toMaxSizeFiles = fileRejections.find(( rejection ) => {
+            const toMaxSizeFiles = fileRejections.find((rejection) => {
                 rejection.errors[0].code === "file-too-large"
             })
 
@@ -148,24 +220,39 @@ export default function Uploader() {
     function renderContent() {
         if ( fileState.uploading ) {
             return (
-                <h1>Uploading...</h1>
+                <RenderUploadingState
+                    progress={fileState.progress}
+                    file={fileState.file as File}
+                />
             );
         }
 
         if ( fileState.error ) {
-            return(
-                <RenderErrorState />
+            return (
+                <RenderErrorState/>
             );
         }
 
-        if ( fileState.objectUrl ){
-            return(
-                <h1>Uploaded file</h1>
+        if ( fileState.objectUrl ) {
+            return (
+                <RenderUploadState
+                    previewUrl={fileState.objectUrl}
+                    isDeleting={fileState.isDeleting}
+                    handleRemoveFile={handleRemoveFile}
+                />
             );
         }
 
-        return(<RenderEmptyState isDragActive={isDragActive}/>);
+        return (<RenderEmptyState isDragActive={isDragActive}/>);
     }
+
+    useEffect(() => {
+        return () => {
+            if ( fileState.objectUrl && !fileState.objectUrl.startsWith("http") ) {
+                URL.revokeObjectURL(fileState.objectUrl)
+            }
+        }
+    }, [ fileState.objectUrl ])
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -174,6 +261,7 @@ export default function Uploader() {
         multiple: false,
         maxSize: 5 * 1024 * 1024,
         onDropRejected: rejectFile,
+        disabled: fileState.uploading || !!fileState.objectUrl,
     })
     return (
         <Card {...getRootProps()} className={cn(
