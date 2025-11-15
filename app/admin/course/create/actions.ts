@@ -1,26 +1,51 @@
 "use server"
 
-import { ApiResponse, CourseSchemaType, User } from "@/lib/type";
-import { courseSchema } from "@/lib/zodSchemas";
+import { requireAdmin } from "@/app/data/admin/require-admin";
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import { prisma } from "@/lib/prisma";
-import { useAuth } from "@/context/auth-provider";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { ApiResponse, CourseSchemaType } from "@/lib/type";
+import { courseSchema } from "@/lib/zodSchemas";
+import request from "@/lib/arcjet";
+
+const aj = arcjet.withRule(
+    detectBot({
+        mode: "LIVE",
+        allow: [],
+    })
+).withRule(
+    fixedWindow({
+        mode: "LIVE",
+        window: "1m",
+        max: 5
+    })
+)
 
 export async function CreateCourse(values: CourseSchemaType): Promise<ApiResponse> {
+        const session = await requireAdmin();
     try {
-        const validation = courseSchema.safeParse(values)
-
-        const session = await auth.api.getSession({
-            headers: await headers(),
+        // @ts-ignore
+        const req = await request();
+        const decision = await aj.protect(req,{
+            fingerprint: session.user.id
         });
 
-        if(!session){
-            redirect("/login")
+        if (decision.isDenied()){
+            if (decision.reason.isRateLimit()){
+                return {
+                    status: 'Error',
+                    message: "You have been blocked due to rate limiting!"
+                }
+            } else {
+                return {
+                    status: "Error",
+                    message: "You are a bot! if this is a mistake contact our support"
+                }
+            }
         }
 
-        if ( !validation.success ){
+        const validation = courseSchema.safeParse(values)
+
+        if (!validation.success) {
             return {
                 status: "Error",
                 message: "Invalid form data"

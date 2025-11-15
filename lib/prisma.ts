@@ -1,4 +1,4 @@
-import "server-only";
+
 
 import { PrismaClient } from "@/lib/generated/prisma";
 

@@ -25,6 +25,7 @@ export const courseCategoris = [
     "Teaching & Academics"
 ];
 export const courseSchema = z.object({
+    id: z.string().optional(),
     title: z.string().min(
         3,
         "title must be at least 3 characters!"
