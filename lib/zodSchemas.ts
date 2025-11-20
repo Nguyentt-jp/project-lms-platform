@@ -12,7 +12,7 @@ export const courseStatus = [
     "Archived",
 ];
 
-export const courseCategoris = [
+export const courseCategories = [
     "Deployment",
     "Business",
     "Finance",
@@ -39,7 +39,7 @@ export const courseSchema = z.object({
     ),
     fileKey: z.string().min(
         1,
-        "Filekey is Requied!"
+        "File key is Required!"
     ),
     price: z.coerce.number().min(
         1,
@@ -54,11 +54,11 @@ export const courseSchema = z.object({
     ),
     level: z.enum(
         courseLevel,
-        "Level is requied!"
+        "Level is required!"
     ),
     category: z.enum(
-        courseCategoris,
-        "Category is requied!"
+        courseCategories,
+        "Category is required!"
     ),
     smallDescription: z.string().min(
         1,
@@ -73,6 +73,6 @@ export const courseSchema = z.object({
     ),
     status: z.enum(
         courseStatus,
-        "Status is requied!"
+        "Status is required!"
     ),
 });

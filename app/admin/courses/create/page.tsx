@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CourseSchemaType } from "@/lib/type";
-import { courseCategoris, courseLevel, courseSchema, courseStatus } from "@/lib/zodSchemas";
+import { courseCategories, courseLevel, courseSchema, courseStatus } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus } from "@tabler/icons-react";
 import { ArrowLeft, Loader2, SparkleIcon } from "lucide-react";
@@ -18,7 +18,7 @@ import slugify from "slugify";
 import Uploader from "@/components/file-upload/uploader";
 import { useTransition } from "react";
 import { tryCatch } from "@/hooks/try-catch";
-import { CreateCourse } from "@/app/admin/course/create/actions";
+import { CreateCourse } from "@/app/admin/courses/create/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +55,7 @@ export default function CourseCreationPage() {
             if ( result.status === "Success" ) {
                 toast.success(result.message);
                 form.reset();
-                router.push("/admin/course")
+                router.push("/admin/courses")
             } else {
                 toast.error(result.message)
             }
@@ -133,7 +133,12 @@ export default function CourseCreationPage() {
                                         <FormItem className="w-full">
                                             <FormLabel>Small Description</FormLabel>
                                             <FormControl>
-                                                <RichTextEditor field={field}/>
+                                                <Textarea
+                                                    placeholder="Description"
+                                                    className="min-h-[120px]"
+                                                    {...field}
+                                                />
+
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -148,11 +153,7 @@ export default function CourseCreationPage() {
                                         <FormItem className="w-full">
                                             <FormLabel>Description</FormLabel>
                                             <FormControl>
-                                                <Textarea
-                                                    placeholder="Description"
-                                                    className="min-h-[120px]"
-                                                    {...field}
-                                                />
+                                                <RichTextEditor field={field}/>
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -192,7 +193,7 @@ export default function CourseCreationPage() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {courseCategoris.map((item) => (
+                                                        {courseCategories.map((item) => (
                                                             <SelectItem key={item} value={item}>
                                                                 {item}
                                                             </SelectItem>

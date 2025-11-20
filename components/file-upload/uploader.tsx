@@ -11,6 +11,7 @@ import { IAppProps, UploadState } from "@/lib/type";
 import { v4 as uuidv4 } from "uuid";
 import RenderUploadState from "@/components/file-upload/_components/render-upload-state";
 import RenderUploadingState from "@/components/file-upload/_components/render-uploading-state";
+import { useConstructUrl } from "@/hooks/use-construct-url";
 
 export default function Uploader({onChange, value}: IAppProps) {
 
@@ -22,7 +23,8 @@ export default function Uploader({onChange, value}: IAppProps) {
         isDeleting: false,
         error: false,
         fileType: "image",
-        key: value
+        key: value,
+        objectUrl: useConstructUrl(value as string)
     });
 
     async function uploadFile(file: File) {

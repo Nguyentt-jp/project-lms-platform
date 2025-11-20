@@ -1,11 +1,11 @@
-"use server"
+"use server";
 
 import { requireAdmin } from "@/app/data/admin/require-admin";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
-import { prisma } from "@/lib/prisma";
 import { ApiResponse, CourseSchemaType } from "@/lib/type";
 import { courseSchema } from "@/lib/zodSchemas";
-import request from "@/lib/arcjet";
+import { prisma } from "@/lib/prisma";
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import { request } from "@arcjet/next";
 
 const aj = arcjet.withRule(
     detectBot({
@@ -20,13 +20,13 @@ const aj = arcjet.withRule(
     })
 )
 
-export async function CreateCourse(values: CourseSchemaType): Promise<ApiResponse> {
-        const session = await requireAdmin();
+export async function updateCourse(data: CourseSchemaType, courseId: string): Promise<ApiResponse> {
+    const user = await requireAdmin();
+
     try {
-        // @ts-ignore
         const req = await request();
         const decision = await aj.protect(req,{
-            fingerprint: session.user.id
+            fingerprint: user.user.id
         });
 
         if (decision.isDenied()){
@@ -43,31 +43,33 @@ export async function CreateCourse(values: CourseSchemaType): Promise<ApiRespons
             }
         }
 
-        const validation = courseSchema.safeParse(values)
+        const result = courseSchema.safeParse(data);
 
-        if (!validation.success) {
+        if(!result){
             return {
                 status: "Error",
-                message: "Invalid form data"
-            }
+                message: "Data invalid",
+            };
         }
 
-        await prisma.course.create({
-            data: {
-                ...validation.data,
-                userId: session.user.id as string
+        await prisma.course.update({
+            where: {
+                id: courseId,
+                userId: user.user.id,
             },
-        })
+            data: {
+                ...result.data
+            },
+        });
 
         return {
             status: "Success",
-            message: "Course created successfully"
+            message: "Course updated successfully!",
         }
-    } catch (error) {
-        console.log(error)
+    } catch {
         return {
             status: "Error",
-            message: "Failed to create course"
+            message: "Failed to update Course.",
         }
     }
 }

@@ -14,7 +14,7 @@ export async function requireAdmin() {
     }
 
     if (session.user.role !== "admin"){
-        return redirect("/user");
+        return redirect("/not-admin");
     }
 
     return session;
