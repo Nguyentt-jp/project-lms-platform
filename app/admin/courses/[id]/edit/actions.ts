@@ -6,6 +6,7 @@ import { courseSchema } from "@/lib/zodSchemas";
 import { prisma } from "@/lib/prisma";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import { request } from "@arcjet/next";
+import { CourseLevel, CourseStatus } from "@/lib/generated/prisma/enums";
 
 const aj = arcjet.withRule(
     detectBot({
@@ -58,7 +59,9 @@ export async function updateCourse(data: CourseSchemaType, courseId: string): Pr
                 userId: user.user.id,
             },
             data: {
-                ...result.data
+                ...result.data,
+                level: result.data?.level as CourseLevel,
+                status: result.data?.status as CourseStatus,
             },
         });
 

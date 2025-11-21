@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ApiResponse, CourseSchemaType } from "@/lib/type";
 import { courseSchema } from "@/lib/zodSchemas";
 import { request } from "@arcjet/next";
+import { CourseLevel, CourseStatus } from "@/lib/generated/prisma/enums";
 
 const aj = arcjet.withRule(
     detectBot({
@@ -55,7 +56,9 @@ export async function CreateCourse(values: CourseSchemaType): Promise<ApiRespons
         await prisma.course.create({
             data: {
                 ...validation.data,
-                userId: session.user.id as string
+                userId: session.user.id as string,
+                level: validation.data.level as CourseLevel,
+                status: validation.data.status as CourseStatus,
             },
         })
 
