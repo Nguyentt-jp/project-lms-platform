@@ -24,7 +24,7 @@ export default function Uploader({onChange, value}: IAppProps) {
         error: false,
         fileType: "image",
         key: value,
-        objectUrl: useConstructUrl(value as string)
+        objectUrl: value ? useConstructUrl(value) : undefined,
     });
 
     async function uploadFile(file: File) {
@@ -250,7 +250,7 @@ export default function Uploader({onChange, value}: IAppProps) {
 
     useEffect(() => {
         return () => {
-            if ( fileState.objectUrl && !fileState.objectUrl.startsWith("http") ) {
+            if ( fileState.objectUrl && !fileState.objectUrl.startsWith("https") ) {
                 URL.revokeObjectURL(fileState.objectUrl)
             }
         }

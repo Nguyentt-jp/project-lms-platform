@@ -65,7 +65,7 @@ export default function CourseCreationPage() {
     return (
         <>
             <div className="flex items-center gap-4">
-                <Link href="/admin/course">
+                <Link href="/admin/courses">
                     <ArrowLeft className={buttonVariants({
                         variant: "outline",
                         size: "icon"
