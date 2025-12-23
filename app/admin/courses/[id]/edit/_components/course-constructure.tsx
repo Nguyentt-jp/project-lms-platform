@@ -29,6 +29,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapter, reorderLessons } from "@/app/admin/courses/[id]/edit/actions";
+import NewChapterModal from "@/app/admin/courses/[id]/edit/_components/new-chapter-modal";
+import NewLessonModal from "@/app/admin/courses/[id]/edit/_components/new-lesson-modal";
+import DeleteLesson from "@/app/admin/courses/[id]/edit/_components/delete-lesson";
+import DeleteChapter from "@/app/admin/courses/[id]/edit/_components/delete-chapter";
 
 interface IAppProps {
     data: AdminCourseSingularType
@@ -238,7 +242,7 @@ export default function CourseConstructure({data}: IAppProps) {
 
     function toggleChapter(chapterId: string){
         setItems(
-            items.map((chapter) => (
+            items.map((chapter: any) => (
                 chapter.id === chapterId ? {
                     ...chapter, isOpen: !chapter.isOpen
                 } : chapter
@@ -262,6 +266,7 @@ export default function CourseConstructure({data}: IAppProps) {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between border-b border-border">
                     <CardTitle>Chapter</CardTitle>
+                    <NewChapterModal courseId={data.id}/>
                 </CardHeader>
                 <CardContent>
                     <SortableContext
@@ -275,7 +280,7 @@ export default function CourseConstructure({data}: IAppProps) {
                                 data={{type: "chapter"}}
                             >
                                 {(listeners) => (
-                                    <Card>
+                                    <Card className="my-4">
                                         <Collapsible
                                             open={item.isOpen}
                                             onOpenChange={() => toggleChapter(item.id)}
@@ -306,9 +311,7 @@ export default function CourseConstructure({data}: IAppProps) {
                                                         {item.title}
                                                     </p>
                                                 </div>
-                                                <Button size="icon" variant='outline'>
-                                                    <Trash2 className="size-4"/>
-                                                </Button>
+                                                <DeleteChapter chapterId={item.id} courseId={data.id}/>
                                             </div>
                                             <CollapsibleContent>
                                                 <div className="p-1">
@@ -335,18 +338,14 @@ export default function CourseConstructure({data}: IAppProps) {
                                                                             <FileText className="size-4"/>
                                                                             <Link href={`/admin/courses/${data.id}/${item.id}/${lesson.id}`}>{lesson.title}</Link>
                                                                         </div>
-                                                                        <Button variant="outline" size="icon">
-                                                                            <Trash2 className="size-4"/>
-                                                                        </Button>
+                                                                        <DeleteLesson courseId={data.id} chapterId={item.id} lessonId={lesson.id}/>
                                                                     </div>
                                                                 )}
                                                             </SortableItem>
                                                         ))}
                                                     </SortableContext>
                                                     <div className="p-2">
-                                                        <Button className="w-full" variant="outline">
-                                                            Create New Lesson
-                                                        </Button>
+                                                        <NewLessonModal courseId={data.id} chapterId={item.id} />
                                                     </div>
                                                 </div>
                                             </CollapsibleContent>

@@ -8,8 +8,6 @@ export type User = {
     image: string,
 };
 
-export type CourseSchemaType = z.infer<typeof courseSchema>
-
 export type BaseFormatItem = {
     name: string;
     icon: React.ReactNode;

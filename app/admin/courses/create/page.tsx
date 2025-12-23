@@ -7,8 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { CourseSchemaType } from "@/lib/type";
-import { courseCategories, courseLevel, courseSchema, courseStatus } from "@/lib/zodSchemas";
+import { courseCategories, courseLevel, courseSchema, CourseSchemaType, courseStatus } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus } from "@tabler/icons-react";
 import { ArrowLeft, Loader2, SparkleIcon } from "lucide-react";
