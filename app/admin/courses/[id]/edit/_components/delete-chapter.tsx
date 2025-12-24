@@ -1,8 +1,16 @@
-import { AlertDialog, AlertDialogCancel, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { deleteChapter } from "@/app/admin/courses/[id]/edit/actions";
 import { tryCatch } from "@/hooks/try-catch";
 import { toast } from "sonner";
@@ -20,7 +28,7 @@ export default function DeleteChapter({chapterId, courseId}: {chapterId: string,
                 return;
             }
 
-            if(result.message === "success") {
+            if(result.status === "Success") {
                 toast.success(result.message);
                 setOpen(false);
             } else if(result.status === "Error") {
@@ -35,18 +43,18 @@ export default function DeleteChapter({chapterId, courseId}: {chapterId: string,
                     <Trash2 className="size-4"/>
                 </Button>
             </AlertDialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Are you absolutely sure!</DialogTitle>
-                    <DialogDescription>This active cannot be undone. This will permanently delete this chapter.</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure!</AlertDialogTitle>
+                    <AlertDialogDescription>This active cannot be undone. This will permanently delete this chapter.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <Button onClick={onSubmit} disabled={open}>
+                    <Button onClick={onSubmit} disabled={isPending}>
                         {isPending ? "Deleting..." : "Delete"}
                     </Button>
-                </DialogFooter>
-            </DialogContent>
+                </AlertDialogFooter>
+            </AlertDialogContent>
         </AlertDialog>
     )
 }
